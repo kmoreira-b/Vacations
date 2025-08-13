@@ -35,7 +35,7 @@
     <!-- Who is covering -->
     <div class="row g-3 mb-4">
         <div class="col-md-6">
-            <label class="form-label">I am</label>
+            <label class="form-label">Select your name from the list below, then click on cover for the account you wish to assist with:</label>
             <select id="coveringEmployee" class="form-select" required>
                 <option value="" selected disabled>Select your name</option>
                 <option th:each="e : ${employees}" th:value="${e.id}" th:text="${e.name}"></option>

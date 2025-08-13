@@ -4,10 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.vacations.models.*;
 import org.example.vacations.repos.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Slf4j
@@ -20,6 +23,13 @@ public class VacationService {
     private final VacationRequestRepository requestRepository;
     private final CoverageRepository coverageRepository;
     private final EmailService emailService;
+
+    // ⬇️ Inject the calendar service
+    private final GoogleCalendarService googleCalendarService;
+
+    // ⬇️ Read timezone (fallback handled below)
+    @Value("${app.timezone:}")
+    private String appTimezone;
 
     @Transactional
     public VacationRequest createRequest(Long requesterId, LocalDate start, LocalDate end, String baseUrl) {
@@ -58,6 +68,27 @@ public class VacationService {
                 "[Vacations] Request created for " + requester.getName(),
                 html
         );
+
+        // ✅ Create Google Calendar event (no DB schema changes needed)
+        try {
+            ZoneId zone = (appTimezone != null && !appTimezone.isBlank())
+                    ? ZoneId.of(appTimezone)
+                    : ZoneId.of("America/Costa_Rica");
+            // end is inclusive in your UI; Calendar end is exclusive -> add 1 day at start-of-day
+            ZonedDateTime zStart = start.atStartOfDay(zone);
+            ZonedDateTime zEnd   = end.plusDays(1).atStartOfDay(zone);
+
+            googleCalendarService.createVacationEvent(
+                    requester.getName(),
+                    null,                           // pass requester email here if you have it
+                    zStart,
+                    zEnd,
+                    String.valueOf(saved.getId()),  // keep traceability in extendedProperties
+                    null                            // notes (none in this flow)
+            );
+        } catch (Exception e) {
+            log.warn("[Calendar] Failed to create event for request {}: {}", saved.getId(), e.getMessage());
+        }
 
         log.info("VacationRequest {} created for {} {}->{}", saved.getId(), requester.getName(), start, end);
         return saved;
@@ -99,6 +130,8 @@ public class VacationService {
                         .build()
         );
         log.info("Coverage added: request {} account {} by {}", requestId, accountId, covering.getName());
+
+        // (Optional) If you later store eventId, call googleCalendarService.updateCoverage(...) here.
     }
 
     public long countCovered(Long requestId) {

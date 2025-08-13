@@ -30,7 +30,7 @@
             0 0 0 1px rgba(255,255,255,0.04) inset;
 }
 
-/* override Bootstrap's default success palette to a more vibrant green */
+
 .alert-success.validation {
     background: linear-gradient(180deg, #1f7a43 0%, #166536 100%);
     color: #ecffef; /* light text */
