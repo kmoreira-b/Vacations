@@ -24,10 +24,10 @@ public class VacationService {
     private final CoverageRepository coverageRepository;
     private final EmailService emailService;
 
-    // ⬇️ Inject the calendar service
+    // Inject the calendar service
     private final GoogleCalendarService googleCalendarService;
 
-    // ⬇️ Read timezone (fallback handled below)
+    // Read timezone (fallback handled below)
     @Value("${app.timezone:}")
     private String appTimezone;
 
@@ -65,11 +65,11 @@ public class VacationService {
 
         emailService.sendHtml(
                 "kmoreirab@ucenfotec.ac.cr",
-                "[Vacations] Request created for " + requester.getName(),
+                "Time-off Request created for " + requester.getName(),
                 html
         );
 
-        // ✅ Create Google Calendar event (no DB schema changes needed)
+        // Create Google Calendar event (no DB schema changes needed)
         try {
             ZoneId zone = (appTimezone != null && !appTimezone.isBlank())
                     ? ZoneId.of(appTimezone)
@@ -80,10 +80,10 @@ public class VacationService {
 
             googleCalendarService.createVacationEvent(
                     requester.getName(),
-                    null,                           // pass requester email here if you have it
+                    null,
                     zStart,
                     zEnd,
-                    String.valueOf(saved.getId()),  // keep traceability in extendedProperties
+                    String.valueOf(saved.getId()),  // traceability in extendedProperties
                     null                            // notes (none in this flow)
             );
         } catch (Exception e) {
@@ -131,7 +131,17 @@ public class VacationService {
         );
         log.info("Coverage added: request {} account {} by {}", requestId, accountId, covering.getName());
 
-        // (Optional) If you later store eventId, call googleCalendarService.updateCoverage(...) here.
+        // 🔗 Update Google Calendar: append "<covering>: <account>" and flip status to "Covered"
+        try {
+            googleCalendarService.updateCoverageByVacationId(
+                    String.valueOf(req.getId()),
+                    covering.getName(),
+                    account.getName(),
+                    null // or covering.getEmail() to add them as an attendee
+            );
+        } catch (Exception e) {
+            log.warn("[Calendar] Failed to update coverage for request {}: {}", req.getId(), e.getMessage());
+        }
     }
 
     public long countCovered(Long requestId) {
