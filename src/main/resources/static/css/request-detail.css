@@ -1,28 +1,26 @@
-/* ---------- Base dark + purple aesthetic ---------- */
+/* ---------- Request Detail (standalone) ---------- */
 :root{
-    --vc-bg: #0b0f17;             /* deeper than bootstrap bg-dark */
-    --vc-panel: rgba(17, 22, 32, .72);
-    --vc-panel-border: rgba(139, 92, 246, .18); /* purple glow edge */
+    --vc-bg: #0b0f17;
+    --vc-panel-border: rgba(139, 92, 246, .18);
     --vc-text: #e6e9ef;
     --vc-muted: #9aa3b2;
 
-    --vc-purple: #8b5cf6;         /* main accent */
+    --vc-purple: #8b5cf6;
     --vc-purple-strong: #7c3aed;
     --vc-purple-weak: rgba(139,92,246,.18);
-
-    --vc-green: #22c55e;          /* keep success tone */
-    --vc-error: #ef4444;
 }
 
+/* Page background + base text */
 .vc-body{
-    background: radial-gradient(1200px 600px at 10% -10%, rgba(139,92,246,.08), transparent 60%),
-    radial-gradient(900px 500px at 100% 0%, rgba(56,189,248,.06), transparent 60%),
-    var(--vc-bg);
+    background:
+            radial-gradient(1200px 600px at 10% -10%, rgba(139,92,246,.08), transparent 60%),
+            radial-gradient(900px 500px at 100% 0%, rgba(56,189,248,.06), transparent 60%),
+            var(--vc-bg);
     color: var(--vc-text);
     min-height: 100vh;
 }
 
-/* soft top glow bar */
+/* Thin glow bar at the very top */
 .vc-top-glow{
     position: fixed; inset: 0 0 auto 0; height: 6px; z-index: 1;
     background: linear-gradient(90deg, transparent, var(--vc-purple), transparent);
@@ -30,17 +28,13 @@
 }
 
 /* ---------- Typography ---------- */
-.vc-title {
+.vc-title{
     font-weight: 700;
-    font-size: 1.75rem;
-    color: #ffffff; /* Solid white */
-
+    font-size: 1.75rem;     /* match index section title size you liked */
+    color: #ffffff;
 }
+.vc-subtitle{ color: #ffffff; }
 
-.vc-subtitle{ color: var(--vc-muted);
-    color: #ffffff; }
-
-/* subtle divider removed in favor of card spacing */
 .vc-section-title{
     font-size: 1.75rem;
     font-weight: 700;
@@ -73,13 +67,13 @@
 /* ---------- Form controls ---------- */
 .vc-label{ color: #c7ccda; font-weight: 600; }
 
-.vc-input, .vc-select{
+.vc-select{
     background: #0f1420;
     border: 1px solid rgba(139,92,246,.25);
     color: var(--vc-text);
     border-radius: .6rem;
 }
-.vc-input:focus, .vc-select:focus{
+.vc-select:focus{
     border-color: var(--vc-purple);
     box-shadow: 0 0 0 .2rem rgba(139,92,246,.25);
     background: #0e1320;
@@ -90,7 +84,7 @@
 .vc-btn-primary{
     background: linear-gradient(180deg, var(--vc-purple), var(--vc-purple-strong));
     border: 1px solid rgba(139,92,246,.55);
-    color: white;
+    color: #fff;
     font-weight: 700;
     border-radius: .7rem;
 }
@@ -104,7 +98,14 @@
 }
 .vc-btn-ghost:hover{
     background: rgba(139,92,246,.08);
-    color: white;
+    color: #fff;
+}
+.vc-btn-ghost[disabled]{
+    opacity:.85;
+    cursor: default;
+    background: rgba(139,92,246,.06);
+    border-color: rgba(139,92,246,.35);
+    color:#cfc7ff;
 }
 
 /* ---------- Table ---------- */
@@ -122,50 +123,11 @@
     color: #e9e5ff;
     font-weight: 700;
 }
-.vc-table tbody tr{
-    border-top: 1px solid rgba(139,92,246,.18);
-}
-.vc-table tbody tr:hover{
-    background: rgba(139,92,246,.06);
-}
+.vc-table tbody tr{ border-top: 1px solid rgba(139,92,246,.18); }
+.vc-table tbody tr:hover{ background: rgba(139,92,246,.06); }
 .vc-arrow{ color: #b69cff; padding: 0 .25rem; }
 
-/* ---------- Empty state ---------- */
-.vc-empty{
-    background: linear-gradient(180deg, rgba(139,92,246,.08), rgba(139,92,246,.04));
-    color: #ddd9ff;
-    border: 1px solid rgba(139,92,246,.22);
-    border-radius: .75rem;
-}
-
-/* ---------- Alerts keep your existing animation styles ---------- */
-.vc-alert{
-    border-radius: .75rem;
-    border-color: rgba(139,92,246,.25);
-    background: rgba(24, 28, 43, .75);
-    color: var(--vc-text);
-}
-
-/* ---------- Loading overlay (kept, just harmonized) ---------- */
-.loading-overlay {
-    position: fixed; inset: 0; display: grid; place-items: center;
-    background: rgba(5, 8, 14, 0.75);
-    z-index: 1080;
-}
-.loading-box {
-    background: #111827;
-    border: 1px solid rgba(139,92,246,.3);
-    padding: 1.5rem 2rem;
-    border-radius: .9rem;
-    text-align: center;
-    color: var(--vc-text);
-    box-shadow: 0 12px 32px rgba(0,0,0,.55), 0 0 60px rgba(139,92,246,.15) inset;
-}
-
-/* utility */
-.d-none { display: none !important; }
-
-/* keep your success alert “validation” styles (slightly tuned) */
+/* ---------- Alerts (success uses your existing 'validation' pattern) ---------- */
 .alert.validation{
     animation: slideFadeInDown 280ms ease-out;
     border-radius: .75rem;
@@ -188,9 +150,8 @@
     background: rgba(255,255,255,.15); color: #ecffef; border-radius: 999px;
     border: 1px solid rgba(255,255,255,.2);
 }
-.alert.validation .btn-close{ filter: invert(1) grayscale(1) brightness(1.8); opacity: .8; }
-.alert.validation .btn-close:hover{ opacity: 1; }
 
+/* utility + animation */
 @keyframes slideFadeInDown{
     from{ opacity:0; transform: translateY(-8px); filter:saturate(.9);}
     to{ opacity:1; transform: translateY(0); filter:saturate(1);}

@@ -89,7 +89,7 @@ public class GoogleCalendarService {
 
         // Build the coverage line: "<covering person>: <Account only>"
         String shortAccount = (accountLabel == null) ? "" : accountLabel.trim();
-        shortAccount = shortAccount.replaceFirst("^.*?\\s*-\\s*", ""); 
+        shortAccount = shortAccount.replaceFirst("^.*?\\s*-\\s*", "");
         String coverageLine = assigneeName + ": " + shortAccount;
 
         // Avoid duplicate lines

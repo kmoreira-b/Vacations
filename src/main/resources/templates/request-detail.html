@@ -4,11 +4,15 @@
     <meta charset="UTF-8">
     <title th:text="'Vacation • ' + ${req.requester.name}">Vacation</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 1) Bootstrap first -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 2) Then your request-detail stylesheet (with cache-bust) -->
+    <link th:href="@{/css/request-detail.css(v=${#dates.createNow().time})}" rel="stylesheet">
 </head>
 
+<body class="vc-body">
+<div class="vc-top-glow"></div>
 
-<body class="bg-dark text-light">
 <!-- Flash messages -->
 <div th:if="${success}" class="alert alert-success validation alert-dismissible fade show" role="alert">
     <span class="icon me-2" aria-hidden="true">✓</span>
@@ -21,35 +25,48 @@
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 
-<div class="container py-4">
-    <a href="/" class="btn btn-secondary btn-sm mb-3">← Back</a>
+<div class="container py-5">
+    <!-- Back -->
+    <a href="/" class="btn vc-btn-ghost btn-sm mb-3">← Back</a>
 
-    <h2 class="mb-1" th:text="${req.requester.name}">Name</h2>
-    <p class="mb-4">
-        <span>Requested:</span>
-        <b th:text="${#temporals.format(req.startDate, 'yyyy-MM-dd')}"></b>
-        →
-        <b th:text="${#temporals.format(req.endDate, 'yyyy-MM-dd')}"></b>
-    </p>
+    <!-- Header -->
+    <header class="mb-2">
+        <h1 class="vc-title mb-1" th:text="${req.requester.name}">Name</h1>
+        <p class="vc-subtitle mb-0">
+            Requested:
+            <b th:text="${#temporals.format(req.startDate, 'yyyy-MM-dd')}"></b>
+            <span class="vc-arrow">→</span>
+            <b th:text="${#temporals.format(req.endDate, 'yyyy-MM-dd')}"></b>
+        </p>
+    </header>
 
-    <!-- Who is covering -->
-    <div class="row g-3 mb-4">
-        <div class="col-md-6">
-            <label class="form-label">Select your name from the list below, then click on cover for the account you wish to assist with:</label>
-            <select id="coveringEmployee" class="form-select" required>
-                <option value="" selected disabled>Select your name</option>
-                <option th:each="e : ${employees}" th:value="${e.id}" th:text="${e.name}"></option>
-            </select>
-            <div id="selectHint" class="form-text text-muted mt-2">
-                Select your name to enable the Cover buttons.
+    <!-- Selector card -->
+    <section class="vc-card mb-4">
+        <div class="vc-card-header">
+            <span class="vc-dot"></span>
+            Choose your name to cover an account
+        </div>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label vc-label">
+                    Select your name from the list below, then click <b>Cover</b> for the account you wish to assist:
+                </label>
+                <select id="coveringEmployee" class="form-select vc-select" required>
+                    <option value="" selected disabled>Select your name</option>
+                    <option th:each="e : ${employees}" th:value="${e.id}" th:text="${e.name}"></option>
+                </select>
+                <div id="selectHint" class="form-text mt-2" style="color:#9aa3b2;">
+                 
+                </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <h4 class="mt-3">Accounts to cover</h4>
+    <!-- Accounts -->
+    <h3 class="vc-section-title mb-3">Accounts to cover</h3>
 
     <div class="table-responsive">
-        <table class="table table-dark table-striped align-middle">
+        <table class="table align-middle vc-table">
             <thead>
             <tr>
                 <th>Account</th>
@@ -75,14 +92,14 @@
                           class="d-inline coverForm">
                         <input type="hidden" name="accountId" th:value="${a.id}">
                         <input type="hidden" name="coveringEmployeeId" class="coverEmpInput">
-                        <button class="btn btn-success btn-sm coverBtn" type="submit" disabled title="Select your name first">
+                        <button class="btn vc-btn-primary btn-sm coverBtn" type="submit" disabled title="Select your name first">
                             Cover
                         </button>
                     </form>
 
-                    <!-- Covered ⇒ show read-only indicator -->
+                    <!-- Covered ⇒ read-only indicator -->
                     <button th:if="${coverName != null}"
-                            class="btn btn-outline-secondary btn-sm" disabled
+                            class="btn vc-btn-ghost btn-sm" disabled
                             th:text="'Covered by ' + ${coverName}">Covered</button>
                 </td>
             </tr>
@@ -112,7 +129,7 @@
                 e.preventDefault();
                 if (!attempted) {
                     attempted = true;
-                    document.getElementById('selectHint').classList.replace('text-muted', 'text-warning');
+                    document.getElementById('selectHint').style.color = '#facc15'; // warning yellow
                 }
                 select.focus();
             }
@@ -121,8 +138,7 @@
 
     select.addEventListener('change', () => {
         attempted = false;
-        document.getElementById('selectHint').classList.add('text-muted');
-        document.getElementById('selectHint').classList.remove('text-warning');
+        document.getElementById('selectHint').style.color = '#9aa3b2';
         updateCoverState();
     });
 
@@ -130,7 +146,5 @@
     updateCoverState();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script th:src="@{/js/index.js}"></script>
-
 </body>
 </html>

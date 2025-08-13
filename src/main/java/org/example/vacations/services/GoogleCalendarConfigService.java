@@ -19,7 +19,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 @Configuration
-@Profile("!test") // don’t build this bean during tests
+@Profile("!test")
 public class GoogleCalendarConfigService {
 
     @Value("${google.oauth.credentials}")
