@@ -49,14 +49,14 @@
         <div class="row g-3">
             <div class="col-md-6">
                 <label class="form-label vc-label">
-                    Select your name from the list below, then click <b>Cover</b> for the account you wish to assist:
+                    Select your name from the list below, then click <b>Cover</b> for the account you wish to assist with:
                 </label>
                 <select id="coveringEmployee" class="form-select vc-select" required>
                     <option value="" selected disabled>Select your name</option>
                     <option th:each="e : ${employees}" th:value="${e.id}" th:text="${e.name}"></option>
                 </select>
                 <div id="selectHint" class="form-text mt-2" style="color:#9aa3b2;">
-                 
+
                 </div>
             </div>
         </div>
@@ -146,5 +146,23 @@
     updateCoverState();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Auto-close any Bootstrap .alert after 3.5s
+        document.querySelectorAll('.alert').forEach(el => {
+            setTimeout(() => {
+                try {
+                    bootstrap.Alert.getOrCreateInstance(el).close(); // nice fade-out + remove
+                } catch (_) {
+                    // Fallback if Bootstrap isn't available for any reason
+                    el.classList.remove('show');
+                    setTimeout(() => el.remove(), 200);
+                }
+            }, 4000);
+        });
+    });
+</script>
+
 </body>
 </html>
