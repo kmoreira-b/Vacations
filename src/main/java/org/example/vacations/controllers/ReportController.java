@@ -2,8 +2,6 @@ package org.example.vacations.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.example.vacations.models.ReportStat;
-import org.example.vacations.services.EmployeeService;
-import org.example.vacations.services.VacationService;
 import org.example.vacations.services.ReportService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,19 +11,23 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-public class HomeController {
+public class ReportController {
 
-    private final EmployeeService employeeService;
-    private final VacationService vacationService;
     private final ReportService reportService;
 
-    @GetMapping("/")
-    public String home(Model model) {
-        // existing data
-        model.addAttribute("employees", employeeService.all());
-        model.addAttribute("requests", vacationService.allRequests());
+    @GetMapping("/reports")
+    public String reportsPage(Model model) {
+        addCommon(model);
+        return "reports";
+    }
 
-        // NEW: data used by the reports modal fragment
+    @GetMapping("/reports/fragment")
+    public String reportsFragment(Model model) {
+        addCommon(model);
+        return "reports :: reportModal";
+    }
+
+    private void addCommon(Model model) {
         List<ReportStat> stats = reportService.buildEmployeeStats();
         long totalVacations = stats.stream().mapToLong(ReportStat::getVacationsCount).sum();
         long totalCoverages = stats.stream().mapToLong(ReportStat::getCoveragesCount).sum();
@@ -34,7 +36,5 @@ public class HomeController {
         model.addAttribute("totalEmployees", stats.size());
         model.addAttribute("totalVacations", totalVacations);
         model.addAttribute("totalCoverages", totalCoverages);
-
-        return "index";
     }
 }

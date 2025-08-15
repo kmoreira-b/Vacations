@@ -1,0 +1,16 @@
+/* Bottom-center container that ignores page width */
+.reports-fab{
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 24px;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;   /* so only the button is clickable */
+    z-index: 1040;
+}
+.reports-fab .btn{
+    pointer-events: auto;   /* re-enable click */
+    border-width: 2px;
+    border-radius: 9999px;
+}

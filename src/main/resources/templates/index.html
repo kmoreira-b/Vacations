@@ -7,6 +7,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- App styles -->
     <link th:href="@{/css/index.css(v=${#dates.createNow().time})}" rel="stylesheet">
+    <link th:href="@{/css/reports.css(v=${#dates.createNow().time})}" rel="stylesheet">
+
 
 </head>
 
@@ -89,10 +91,10 @@
         <table class="table align-middle vc-table">
             <thead>
             <tr>
-                <th>Employee</th>
+                <th>TAM</th>
                 <th>Dates</th>
-                <th>Covered</th>
-                <th>Open</th>
+                <th>Coverage</th>
+                <th>Status</th>
             </tr>
             </thead>
             <tbody>
@@ -116,6 +118,20 @@
         </table>
     </div>
 </div>
+
+<!-- Report Butoon -->
+<div class="position-fixed bottom-10 start-50 translate-middle-x mb-4 pe-none" style="z-index:1040;">
+    <button type="button"
+            class="btn btn-outline-light px-4  border-2 pe-auto"
+            data-bs-toggle="modal"
+            data-bs-target="#reportsModal">
+        Reports
+    </button>
+</div>
+
+
+<!--Inject the modal markup from templates/reports.html -->
+<div th:replace="~{reports :: reportModal}"></div>
 
 <!-- Full-page loading overlay (shown on submit) -->
 <div id="loadingOverlay" class="loading-overlay d-none">

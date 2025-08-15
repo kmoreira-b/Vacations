@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Reports</title>
+  <link th:href="@{/css/reports.css(v=${#dates.createNow().time})}" rel="stylesheet">
+</head>
+<body>
+
+<div th:fragment="reportModal">
+  <div class="modal fade" id="reportsModal" tabindex="-1" aria-labelledby="reportsLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content" style="background:#121420; color:#d8d8e3;">
+        <div class="modal-header" style="border-color:#2a2f45;">
+          <h5 class="modal-title" id="reportsLabel">Vacation & Coverage Report</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="mb-3 d-flex gap-3 flex-wrap">
+            <span class="badge rounded-pill px-3 py-2" style="background:#242942;">
+              Total employees: <span th:text="${totalEmployees}">0</span>
+            </span>
+            <span class="badge rounded-pill px-3 py-2" style="background:#242942;">
+              Total vacations requests: <span th:text="${totalVacations}">0</span>
+            </span>
+
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-dark table-hover align-middle" style="--bs-table-bg:#15182a;">
+              <thead style="background:#1d2034;">
+              <tr>
+                <th>#</th>
+                <th>TAM</th>
+                <th class="text-end">Times TAM Requested Vacations </th>
+                <th class="text-end">Times TAM Covered an Account</th>
+
+              </tr>
+              </thead>
+              <tbody>
+              <tr th:each="row, i : ${stats}">
+                <td th:text="${i.index + 1}">1</td>
+                <td th:text="${row.employeeName}">Not Available</td>
+                <td class="text-end" th:text="${row.vacationsCount}">0</td>
+                <td class="text-end" th:text="${row.coveragesCount}">0</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <small class="text-secondary">
+            Tip: Look for high vacation counts with low coverages to spot imbalance.
+          </small>
+        </div>
+
+        <div class="modal-footer" style="border-color:#2a2f45;">
+          <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
