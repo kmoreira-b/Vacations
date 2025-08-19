@@ -48,12 +48,13 @@ public class ReportService {
         }
 
         // Sort: lowest coverage/vacation ratio first (worst), then more vacations, then fewer coverages
+        // Sort: fewer coverages first; if tied, push up the one who took more vacations;
+        // final tie-breaker by name for stability.
         stats.sort(
-                Comparator.comparingDouble(ReportStat::getCoveragePerVacation) // asc = worse first
+                Comparator.comparingLong(ReportStat::getCoveragesCount)
                         .thenComparing(Comparator.comparingLong(ReportStat::getVacationsCount).reversed())
-                        .thenComparing(Comparator.comparingLong(ReportStat::getCoveragesCount))
+                        .thenComparing(ReportStat::getEmployeeName, String.CASE_INSENSITIVE_ORDER)
         );
-
         return stats;
     }
 }
