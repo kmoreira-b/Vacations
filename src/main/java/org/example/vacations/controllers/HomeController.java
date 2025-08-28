@@ -25,7 +25,7 @@ public class HomeController {
         model.addAttribute("employees", employeeService.all());
         model.addAttribute("requests", vacationService.allRequests());
 
-        // NEW: data used by the reports modal fragment
+        //data used by the reports modal fragment
         List<ReportStat> stats = reportService.buildEmployeeStats();
         long totalVacations = stats.stream().mapToLong(ReportStat::getVacationsCount).sum();
         long totalCoverages = stats.stream().mapToLong(ReportStat::getCoveragesCount).sum();

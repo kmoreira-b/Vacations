@@ -17,8 +17,4 @@ public interface CoverageRepository extends JpaRepository<Coverage, Long> {
     @Query("select c.coveringEmployee.id, count(c) from Coverage c group by c.coveringEmployee.id")
     List<Object[]> countCoveragesByEmployee();
 
-    /* Native fallback (adjust names if needed):
-    @Query(value = "select covering_employee_id, count(*) from coverages group by covering_employee_id", nativeQuery = true)
-    List<Object[]> countCoveragesByEmployee();
-    */
 }

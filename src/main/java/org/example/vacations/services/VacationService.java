@@ -69,12 +69,11 @@ public class VacationService {
                 html
         );
 
-        // Create Google Calendar event (no DB schema changes needed)
+        // Create Google Calendar event
         try {
             ZoneId zone = (appTimezone != null && !appTimezone.isBlank())
                     ? ZoneId.of(appTimezone)
                     : ZoneId.of("America/Costa_Rica");
-            // end is inclusive in your UI; Calendar end is exclusive -> add 1 day at start-of-day
             ZonedDateTime zStart = start.atStartOfDay(zone);
             ZonedDateTime zEnd   = end.plusDays(1).atStartOfDay(zone);
 
@@ -84,7 +83,7 @@ public class VacationService {
                     zStart,
                     zEnd,
                     String.valueOf(saved.getId()),  // traceability in extendedProperties
-                    null                            // notes (none in this flow)
+                    null
             );
         } catch (Exception e) {
             log.warn("[Calendar] Failed to create event for request {}: {}", saved.getId(), e.getMessage());
