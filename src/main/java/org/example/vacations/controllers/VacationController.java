@@ -14,9 +14,7 @@ import java.time.LocalDate;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-
 //Purpose: Manages user interaction, request vacation, cover someone else, view stats, etc
-
 @Controller
 @RequiredArgsConstructor
 public class VacationController {
@@ -29,12 +27,20 @@ public class VacationController {
                                 @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                                 @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
                                 HttpServletRequest req,
-                                RedirectAttributes ra) {
+                                RedirectAttributes ra,
+                                org.springframework.security.core.Authentication auth) {
         try {
             String baseUrl = req.getRequestURL().toString().replace(req.getRequestURI(), "");
-            var saved = vacationService.createRequest(employeeId, startDate, endDate, baseUrl); // talks to the service, to validate dates, saves it to DB and triggers email.
+            var saved = vacationService.createRequest(employeeId, startDate, endDate, baseUrl); // validate, save, email
+
             ra.addFlashAttribute("success", "Vacation request created.");
-            return "redirect:/request/" + saved.getId();
+
+            // If an ADMIN is logged in, send them to the request detail; public users go back to index
+            boolean isAdmin = auth != null && auth.getAuthorities().stream()
+                    .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+
+            return isAdmin ? "redirect:/request/" + saved.getId()
+                    : "redirect:/";
         } catch (IllegalArgumentException ex) {
             ra.addFlashAttribute("error", ex.getMessage());
             return "redirect:/";
@@ -61,10 +67,13 @@ public class VacationController {
     public String cover(@PathVariable Long id,
                         @RequestParam Long accountId,
                         @RequestParam Long coveringEmployeeId,
+                        HttpServletRequest req,
                         RedirectAttributes ra) {
         try {
-            vacationService.coverAccount(id, accountId, coveringEmployeeId); // Validates inputs, one person per account, saves Coverage entry in DB
-            ra.addFlashAttribute("success", "Coverage updated. Thanks for supporting the team!");
+            // baseUrl for deep link in emails
+            String baseUrl = req.getRequestURL().toString().replace(req.getRequestURI(), "");
+            vacationService.coverAccount(id, accountId, coveringEmployeeId, baseUrl); // Validates & saves + send emails
+            ra.addFlashAttribute("success", "TAM assigned correctly!");
         } catch (IllegalArgumentException ex) {
             ra.addFlashAttribute("error", ex.getMessage());
         }

@@ -23,4 +23,17 @@ public class Employee {
     @Builder.Default
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Account> accounts = new ArrayList<>();
+
+    // in Employee.java
+    @Column(nullable = false)
+    private String password;   // bcrypt in DB column `password`
+
+    @Column(nullable = false)
+    private String role;       // "ADMIN" or "USER" (no ROLE_ prefix)
+
+    @Column(nullable = false)
+    private Boolean enabled;   // 1/0 in DB
+         // "ADMIN" or "USER"
+
+
 }

@@ -146,4 +146,47 @@ public class VacationService {
     public long countCovered(Long requestId) {
         return coverageRepository.countByRequestId(requestId);
     }
+
+    @Transactional
+    public void coverAccount(Long requestId, Long accountId, Long coveringEmployeeId, String baseUrl) {
+        VacationRequest req = requestRepository.findById(requestId).orElseThrow();
+        Account account = accountRepository.findById(accountId).orElseThrow();
+
+        if (!account.getOwner().getId().equals(req.getRequester().getId())) {
+            throw new IllegalArgumentException("Account does not belong to requester");
+        }
+        if (coverageRepository.existsByRequestIdAndAccountId(requestId, accountId)) {
+            return; // idempotent
+        }
+        if (coveringEmployeeId.equals(req.getRequester().getId())) {
+            throw new IllegalArgumentException("Requester cannot cover their own accounts");
+        }
+
+        Employee covering = employeeRepository.findById(coveringEmployeeId).orElseThrow();
+        coverageRepository.save(
+                Coverage.builder()
+                        .request(req)
+                        .account(account)
+                        .coveringEmployee(covering)
+                        .build()
+        );
+        log.info("Coverage added: request {} account {} by {}", requestId, accountId, covering.getName());
+
+        // 🔗 Google Calendar update
+        try {
+            googleCalendarService.updateCoverageByVacationId(
+                    String.valueOf(req.getId()),
+                    covering.getName(),
+                    account.getName(),
+                    null // or covering.getEmail()
+            );
+        } catch (Exception e) {
+            log.warn("[Calendar] Failed to update coverage for request {}: {}", req.getId(), e.getMessage());
+        }
+
+        // ✅ Send coverage emails via EmailService
+        emailService.sendCoverageEmails(req, account, covering, baseUrl);
+    }
+
+
 }

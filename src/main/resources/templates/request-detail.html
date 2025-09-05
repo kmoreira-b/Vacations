@@ -43,26 +43,26 @@
     <!-- Selector card -->
     <section class="vc-card mb-4">
         <div class="vc-card-header">
-            <span class="vc-dot"></span>
-            Choose your name to cover an account
-        </div>
-        <div class="row g-3">
-            <div class="col-md-6">
-                <label class="form-label vc-label">
-                    Select your name from the list below, then click <b>Cover</b> for the account you wish to assist with:
-                </label>
-                <select id="coveringEmployee" class="form-select vc-select" required>
-                    <option value="" selected disabled>Select your name</option>
-                    <option th:each="e : ${employees}" th:value="${e.id}" th:text="${e.name}"></option>
-                </select>
-                <div id="selectHint" class="form-text mt-2" style="color:#9aa3b2;">
+            <!--   <span class="vc-dot"></span> -->
+             <!--   Choose your name to cover an account -->
+          </div>
+          <div class="row g-3">
+              <div class="col-md-6">
+                  <label class="form-label vc-label">
+                      Select the TAM's name from the list below, then click <b>Assign</b> to complete the coverage:
+                  </label>
+                  <select id="coveringEmployee" class="form-select vc-select" required>
+                      <option value="" selected disabled>Select TAM</option>
+                      <option th:each="e : ${employees}" th:value="${e.id}" th:text="${e.name}"></option>
+                  </select>
+                  <div id="selectHint" class="form-text mt-2" style="color:#9aa3b2;">
 
-                </div>
-            </div>
-        </div>
-    </section>
+                  </div>
+              </div>
+          </div>
+      </section>
 
-    <!-- Accounts -->
+      <!-- Accounts -->
     <h3 class="vc-section-title mb-3">Accounts to cover</h3>
 
     <div class="table-responsive">
@@ -80,7 +80,7 @@
 
                 <!-- Use coveredBy map: accountId -> covering employee name -->
                 <td th:with="coverName=${coveredBy[a.id]}">
-                    <span th:if="${coverName == null}">Uncovered</span>
+                    <span th:if="${coverName == null}">Pending Coverage</span>
                     <span th:if="${coverName != null}" th:text="'Covered by ' + ${coverName}">Covered</span>
                 </td>
 
@@ -93,7 +93,7 @@
                         <input type="hidden" name="accountId" th:value="${a.id}">
                         <input type="hidden" name="coveringEmployeeId" class="coverEmpInput">
                         <button class="btn vc-btn-primary btn-sm coverBtn" type="submit" disabled title="Select your name first">
-                            Cover
+                            Assign
                         </button>
                     </form>
 
