@@ -55,6 +55,7 @@ public class EmailService {
         String startStr = fmt.format(req.getStartDate());
         String endStr   = fmt.format(req.getEndDate());
         long businessDays = countBusinessDays(req.getStartDate(), req.getEndDate());
+        String userLink = (baseUrl == null ? "" : baseUrl) + "/request/" + req.getId() + "/view"; // Link in the email notification
         String link = (baseUrl == null ? "" : baseUrl) + "/request/" + req.getId();
 
         String fullAccountName = account.getName();
@@ -72,7 +73,7 @@ public class EmailService {
                 covering.getName(),
                 shortAccountName,
                 startStr, endStr, businessDays,
-                link, link
+                userLink, userLink
         );
 
         sendHtml(
@@ -91,7 +92,7 @@ public class EmailService {
                 req.getRequester().getName(),
                 shortAccountName,
                 startStr, endStr, businessDays,
-                link, link
+                userLink, userLink
         );
 
         sendHtml(
