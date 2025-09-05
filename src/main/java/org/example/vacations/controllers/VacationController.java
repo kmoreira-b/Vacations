@@ -2,6 +2,8 @@ package org.example.vacations.controllers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.example.vacations.models.Account;
+import org.example.vacations.models.VacationRequest;
 import org.example.vacations.services.EmployeeService;
 import org.example.vacations.services.VacationService;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -78,5 +81,26 @@ public class VacationController {
             ra.addFlashAttribute("error", ex.getMessage());
         }
         return "redirect:/request/" + id;
+    }
+    // Endpoint that allows non admin users to view current status of the request
+
+    @GetMapping("/request/{id}/view")
+    public String viewRequest(@PathVariable Long id, Model model) {
+        VacationRequest req = vacationService.getRequest(id);
+        List<Account> accounts = vacationService.requesterAccounts(req);
+
+        // Build coverage map using the same logic as requestDetail method
+        Map<Long, String> coveredBy = req.getCoverages().stream()
+                .collect(Collectors.toMap(
+                        c -> c.getAccount().getId(),
+                        c -> c.getCoveringEmployee().getName()
+                ));
+
+        model.addAttribute("req", req);
+        model.addAttribute("accounts", accounts);
+        model.addAttribute("coveredBy", coveredBy);
+        model.addAttribute("viewOnly", true);
+
+        return "request-detail-noadmin";
     }
 }

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${req.requester.name} + ' Vacation Request'">Vacation Request</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link th:href="@{/css/index.css(v=${#dates.createNow().time})}" rel="stylesheet">
+  <link th:href="@{/css/reports.css(v=${#dates.createNow().time})}" rel="stylesheet">
+</head>
+
+<body class="vc-body">
+<div class="vc-top-glow"></div>
+
+<div class="container py-5">
+  <!-- Back button -->
+  <a href="/" class="btn btn-outline-light mb-4">← Back</a>
+
+  <!-- Header -->
+  <h2 th:text="${req.requester.name}"></h2>
+  <p>
+    Requested:
+    <span th:text="${#temporals.format(req.startDate, 'yyyy-MM-dd')}"></span>
+    →
+    <span th:text="${#temporals.format(req.endDate, 'yyyy-MM-dd')}"></span>
+  </p>
+
+  <!-- Accounts table -->
+  <h4 class="mt-4">Accounts to cover</h4>
+  <div class="table-responsive">
+    <table class="table align-middle vc-table">
+      <thead>
+      <tr>
+        <th>Account</th>
+        <th>Status</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="a : ${accounts}">
+        <td th:text="${a.name}">Account</td>
+        <td>
+                    <span th:if="${coveredBy[a.id] != null}"
+                          th:text="'Covered by ' + ${coveredBy[a.id]}"></span>
+          <span th:if="${coveredBy[a.id] == null}">Pending Coverage</span>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

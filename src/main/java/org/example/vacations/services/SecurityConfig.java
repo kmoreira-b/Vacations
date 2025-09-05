@@ -64,9 +64,10 @@ public class SecurityConfig {
                 .requestCache(rc -> rc.requestCache(requestCache))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/login", "/css/**", "/js/**", "/error").permitAll()
-                        // allow creating a vacation request without login
                         .requestMatchers(HttpMethod.POST, "/request").permitAll()
-                        // request details & coverage assignment require ADMIN
+                        // This allows ONLY the view endpoint for everyone
+                        .requestMatchers(HttpMethod.GET, "/request/*/view").permitAll()
+                        // This still blocks all OTHER /request/** paths for non-admins
                         .requestMatchers("/request/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )

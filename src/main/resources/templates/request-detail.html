@@ -43,14 +43,12 @@
     <!-- Selector card -->
     <section class="vc-card mb-4">
         <div class="vc-card-header">
-            <!--   <span class="vc-dot"></span> -->
-             <!--   Choose your name to cover an account -->
+            <span class="vc-dot"></span>
+            Select the TAM's name from the list below, then click <b>Assign</b> to complete the coverage:
           </div>
           <div class="row g-3">
               <div class="col-md-6">
-                  <label class="form-label vc-label">
-                      Select the TAM's name from the list below, then click <b>Assign</b> to complete the coverage:
-                  </label>
+
                   <select id="coveringEmployee" class="form-select vc-select" required>
                       <option value="" selected disabled>Select TAM</option>
                       <option th:each="e : ${employees}" th:value="${e.id}" th:text="${e.name}"></option>

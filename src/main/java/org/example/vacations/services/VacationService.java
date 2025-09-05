@@ -13,9 +13,9 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-@Slf4j
-@Service
-@RequiredArgsConstructor
+@Slf4j //  Lombok annotation for logging
+@Service //  Spring service component
+@RequiredArgsConstructor // Generates constructor for all final fields
 public class VacationService {
 
     private final EmployeeRepository employeeRepository;
@@ -32,6 +32,7 @@ public class VacationService {
     private String appTimezone;
 
     @Transactional
+    // Checks for valid date range (end >= start) / Uses a repository query to ensure the same employee doesn't have overlapping vacation requests
     public VacationRequest createRequest(Long requesterId, LocalDate start, LocalDate end, String baseUrl) {
         if (start == null || end == null || end.isBefore(start)) {
             throw new IllegalArgumentException("Invalid date range.");
@@ -106,6 +107,7 @@ public class VacationService {
     }
 
     @Transactional
+    //Two Overloaded Methods
     public void coverAccount(Long requestId, Long accountId, Long coveringEmployeeId) {
         VacationRequest req = requestRepository.findById(requestId).orElseThrow();
         Account account = accountRepository.findById(accountId).orElseThrow();
@@ -143,6 +145,7 @@ public class VacationService {
         }
     }
 
+    //Returns how many accounts have coverage assigned for a request.
     public long countCovered(Long requestId) {
         return coverageRepository.countByRequestId(requestId);
     }
@@ -184,7 +187,7 @@ public class VacationService {
             log.warn("[Calendar] Failed to update coverage for request {}: {}", req.getId(), e.getMessage());
         }
 
-        // ✅ Send coverage emails via EmailService
+        // Send coverage emails via EmailService
         emailService.sendCoverageEmails(req, account, covering, baseUrl);
     }
 

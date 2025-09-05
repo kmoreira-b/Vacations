@@ -88,13 +88,13 @@
     </div>
 
     <div class="table-responsive" th:if="${!#lists.isEmpty(requests)}">
-        <table class="table align-middle vc-table">
-            <thead>
+        <table class="table table-sm align-middle vc-table">
+        <thead>
             <tr>
                 <th>TAM</th>
                 <th>Dates</th>
                 <th>Coverage</th>
-                <th>Status</th>
+                <th>Action</th>
             </tr>
             </thead>
             <tbody>
@@ -111,7 +111,8 @@
                     <span th:text="${#lists.size(r.requester.accounts)}"></span>
                 </td>
                 <td>
-                    <a class="btn vc-btn-ghost btn-sm" th:href="@{/request/{id}(id=${r.id})}">Open</a>
+                    <a class="btn vc-btn-ghost btn-sm me-1" th:href="@{/request/{id}/view(id=${r.id})}">View</a>
+                    <a class="btn vc-btn-ghost btn-sm" th:href="@{/request/{id}(id=${r.id})}">Assign</a>
                 </td>
             </tr>
             </tbody>
